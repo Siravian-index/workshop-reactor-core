@@ -19,17 +19,17 @@ public class PersonController {
 
     @GetMapping("/{id}")
     public Mono<Person> getPerson(@PathVariable("id") String id) {
-        return Mono.just(new Person());
+        return personService.getOnePerson(id);
     }
 
     @PutMapping
     public Mono<Void> update(@RequestBody Mono<Person> personMono) {
-        return Mono.empty();
+        return personService.updatePerson(personMono);
     }
 
     @DeleteMapping("/{id}")
     public Mono<Void> delete(@PathVariable("id") String id) {
-        return Mono.empty();
+        return personService.deleteOnePerson(id);
     }
 
     @GetMapping

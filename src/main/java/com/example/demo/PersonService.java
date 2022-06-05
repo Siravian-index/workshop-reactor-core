@@ -9,8 +9,6 @@ import java.util.function.BiFunction;
 
 @Service
 public class PersonService {
-    private final BiFunction<PersonRepository, Person, Mono<Person>> validateBeforeInsert
-            = (repo, person) -> repo.findByName(person.getName());
     @Autowired
     private PersonRepository repository;
 
@@ -20,8 +18,23 @@ public class PersonService {
 
     public Mono<Void> insert(Mono<Person> personMono) {
         return personMono
-                .flatMap(person -> validateBeforeInsert.apply(repository, person))
+                .flatMap(person -> repository.findByName(person.getName()))
                 .switchIfEmpty(Mono.defer(() -> personMono.doOnNext(repository::save)))
                 .then();
     }
+
+    public Mono<Person> getOnePerson(String id) {
+        return repository.findById(id);
+    }
+
+    public Mono<Void> updatePerson(Mono<Person> personMono) {
+        return personMono
+                .flatMap(person -> repository.save(person))
+                .then();
+    }
+
+    public Mono<Void> deleteOnePerson(String id) {
+        return repository.deleteById(id);
+    }
+
 }
